@@ -3,36 +3,71 @@ package src.estoque
 import src.item.Item
 
 class Estoque {
-    private val listaItem: ArrayList<Item> = ArrayList()
+    private var codigo = 0
+    private var nomeItem = ""
+    private var preco = 0.0
+    private val listaItem = mutableSetOf<Item>()
 
-    fun registrarItem() {
-        println("Digite o código do produto: ")
-        val codigo = readln().toInt()
+    fun registrarItem(): Item {
+        codigo = verificarItemRepetido(listaItem)
         println("Digite o nome do produto: ")
-        val nomeItem = readln()
-        println("Digite o preco do produto: ")
-        val preco = readln().toBigDecimal()
-        val item: Item = Item(codigo = codigo, nome = nomeItem, preco = preco)
-        listaItem.add(item);
+        nomeItem = readln()
+        println("Digite o preço do produto: ")
+        while (true) {
+            try {
+                preco = readln().toDouble()
+                break
+            } catch (exception: Exception) {
+                println(exception.message)
+                println("Digite um número")
+            }
+        }
+        val item = Item(codigo = codigo, nome = nomeItem, preco = preco)
+        listaItem.add(item)
         println("Item registrado com sucesso\n")
-
+        return item
     }
 
-    fun verificarItemRepetido() {
-        TODO("Não implementado ainda")
+    fun verificarItemRepetido(lista: MutableSet<Item>): Int {
+        while (true) {
+            try {
+                println("Digite o código do produto: ")
+                codigo = readln().toInt()
+                lista.forEach {
+                    while (it.codigo == codigo) {
+                        println("Código já usado, digite um novo código:")
+                        codigo = readln().toInt()
+                    }
+                }
+                break
+            } catch (exception: Exception) {
+                println(exception.message)
+                println("Digite um número")
+            }
+        }
+        return codigo
     }
 
-    private fun listarItens() {
-        if (!listaItem.isEmpty()) {
+    fun listarItens() {
+        if (listaItem.isEmpty()) {
             println("Não temos nenhum item cadastrado no momento")
         } else {
-            println("Atualmente temos os seguintes itens: ${listaItem.toString()}");
+            println("Atualmente temos os seguintes itens: $listaItem");
         }
     }
 
     fun darBaixaItem() {
-        print("Qual o código do item a dar baixa? ")
-        val codigoItemADarBaixa = readln()
+        var codigoItemADarBaixa: Int
+        while (true) {
+            try {
+                print("Qual o código do item a dar baixa? ")
+                codigoItemADarBaixa = readln().toInt()
+                break
+            } catch (exception: Exception) {
+                println(exception.message)
+                println("Digite um número")
+            }
+        }
         for (item in listaItem) {
             if (codigoItemADarBaixa == item.codigo) {
                 listaItem.remove(item)
